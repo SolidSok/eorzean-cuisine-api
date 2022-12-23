@@ -7,13 +7,20 @@ let foodSchema = mongoose.Schema({
   region: { trype: String },
 });
 
-let locationSchema = mongoose.Schema({
+let locationsSchema = mongoose.Schema({
   name: { type: String, required: true },
   description: { type: String, required: true },
 });
 
+let usersSchema = mongoose.Schema({
+  name: { type: String, required: true },
+  password: { type: String, required: true },
+});
+
 let Food = mongoose.model('Food', foodSchema);
-let Location = mongoose.model('Location', locationSchema);
+let Locations = mongoose.model('Location', locationsSchema);
+let Users = mongoose.model('Users', usersSchema);
 
 module.exports.Food = Food;
-module.exports.Location = Location;
+module.exports.Location = Locations;
+module.exports.Users = Users;
