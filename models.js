@@ -22,5 +22,5 @@ let Locations = mongoose.model('Location', locationsSchema);
 let Users = mongoose.model('Users', usersSchema);
 
 module.exports.Food = Food;
-module.exports.Location = Locations;
+module.exports.Locations = Locations;
 module.exports.Users = Users;

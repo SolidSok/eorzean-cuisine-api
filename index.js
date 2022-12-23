@@ -5,19 +5,19 @@ const assignID = crypto.randomUUID();
 
 const app = express();
 const mongoose = require('mongoose');
-// const Models = require('./models.js');
+const Models = require('./models.js');
 
-// const food = Models.food;
-// const Locations = Models.Locations;
-// const Users = Models.Users;
+const food = Models.Food;
+const Locations = Models.Locations;
+const Users = Models.Users;
 
 app.use(express.json());
 app.use(bodyParser.json());
 
-// mongoose.connect('mongodb://localhost27017/eorzeanCuisine', {
-//   useNewUrlParser: true,
-//   useUnifiedTopology: true,
-// });
+mongoose.connect('mongodb://127.0.0.1:27017/EorzeanCuisine', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
 // ----- Routes ----- //
 
@@ -25,78 +25,58 @@ app.get('/', (req, res) => {
   res.send('Welcome!');
 });
 
-// ----- delete this later ------------------
-let users = [
-  {
-    id: 1,
-    name: 'Amy',
-    favoritefood: ['Pasta'],
-  },
-  {
-    id: 2,
-    name: 'Bob',
-    favoritefood: [],
-  },
-  {
-    id: 3,
-    name: 'Cessei',
-    favoritefood: ['pizza', 'chow-mein'],
-  },
-];
-
-let food = [
-  {
-    name: 'pizza',
-    description: 'yummy',
-    type: 'meal',
-    ingredient: 'item1',
-  },
-  {
-    name: 'pasta',
-    description: 'yummy',
-    type: 'meal',
-    ingredient: ['item3', 'item4'],
-  },
-  {
-    name: 'bread',
-    description: 'yummy',
-    type: 'meal',
-    ingredient: ['item1', 'item2'],
-  },
-  {
-    name: 'drink',
-    description: 'sweet',
-    type: 'drink',
-    ingredient: ['item3', 'item5'],
-  },
-];
-
 app.get('/users', (req, res) => {
-  res.status(200).json(users);
+  Users.find()
+    .then(users => {
+      res.status(201).json(users);
+    })
+    .catch(err => {
+      console.error(err);
+      res.status(500).send('Error: ' + err);
+    });
 });
 
 app.post('/users', (req, res) => {
-  const newUser = req.body;
-  if (newUser.name) {
-    newUser.id = assignID;
-    res.status(201).json(newUser);
-  } else {
-    res.status(400).send('user needs name');
-  }
+  Users.findOne({ name: req.body.name }).then(user => {
+    if (user) {
+      return res.status(400).send(req.body.name + ' is already a user.');
+    } else {
+      Users.create({
+        name: req.body.name,
+        password: req.body.password,
+        email: req.body.email,
+        birthday: req.body.birthday,
+      })
+        .then(user => {
+          res.status(201).json(user);
+        })
+        .catch(err => {
+          console.error(err);
+          res.status(500).send('Error: ' + err);
+        });
+    }
+  });
 });
 
-app.put('/users/:id', (req, res) => {
-  const { id } = req.params;
-  const updatedUser = req.body;
-
-  let user = users.find(user => user.id == id);
-
-  if (user) {
-    user.name = updatedUser.name;
-    res.status(200).json(user);
-  } else {
-    res.status(400).send('no such user');
-  }
+app.put('/users/:name', (req, res) => {
+  Users.findOneAndUpdate(
+    { name: req.params.name },
+    {
+      $set: {
+        name: req.body.name,
+        password: req.body.password,
+      },
+    },
+    { new: true }, // This line makes sure that the updated document is returned
+    (err, updatedUser) => {
+      if (err) {
+        console.error(err);
+        res.status(500).send('Error: ' + err);
+      } else {
+        res.json(updatedUser);
+      }
+    }
+  );
 });
 
 // DELETE remove users
