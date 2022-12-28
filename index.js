@@ -7,7 +7,7 @@ const app = express();
 const mongoose = require('mongoose');
 const Models = require('./models.js');
 
-const food = Models.Food;
+const Food = Models.Food;
 const Locations = Models.Locations;
 const Users = Models.Users;
 
@@ -79,39 +79,48 @@ app.put('/users/:name', (req, res) => {
   );
 });
 
-// DELETE remove users
-app.delete('/users/:id', (req, res) => {
-  const { id } = req.params;
-
-  let user = users.find(user => user.id == id);
-  if (user) {
-    users = users.filter(user => user.id != id);
-    res.status(200).send(`user ${id} has been deleted`);
-  } else {
-    res.status(400).send('no such user');
-  }
+// Delete a user by name
+app.delete('/users/:name', (req, res) => {
+  Users.findOneAndRemove({ name: req.params.name })
+    .then(user => {
+      if (!user) {
+        res.status(400).send(req.params.name + ' was not found');
+      } else {
+        res.status(200).send(req.params.name + ' was deleted.');
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      res.status(500).send('Error: ' + err);
+    });
 });
 
-// CREATE add food to user arrays
+// CREATE add food to favorites
 app.post('/users/:id/:foodName', (req, res) => {
-  const { id, foodName } = req.params;
-
-  let user = users.find(user => user.id == id);
-  if (user) {
-    user.favoritefood.push(foodName);
-    res.status(200).send(`${foodName} has been added to user ${id}'s array`);
-  } else {
-    res.status(400).send('no such user');
-  }
+  Users.findOneAndUpdate(
+    { id: req.params.id },
+    {
+      $push: { favoriteFood: req.params.foodName },
+    },
+    { new: true }, // This line makes sure that the updated document is returned
+    (err, updatedUser) => {
+      if (err) {
+        console.error(err);
+        res.status(500).send('Error: ' + err);
+      } else {
+        res.json(updatedUser);
+      }
+    }
+  );
 });
 
-// DELETE remove food from users' arrays
+// DELETE remove food from users' favorites
 app.delete('/users/:id/:foodName', (req, res) => {
   const { id, foodName } = req.params;
 
-  let user = users.find(user => user.id == id);
+  let user = Users.find(user => user.id == id);
   if (user) {
-    user.favoritefood.filter(name => name !== foodName);
+    user.favoriteFood.filter(name => name !== foodName);
     res
       .status(200)
       .send(`${foodName} has been removed from user ${id}'s array`);
@@ -121,50 +130,39 @@ app.delete('/users/:id/:foodName', (req, res) => {
 });
 
 app.get('/food', (req, res) => {
-  res.status(200).json(food);
+  Food.find()
+    .then(food => {
+      res.status(201).json(food);
+    })
+    .catch(err => {
+      console.error(err);
+      res.status(500).send('Error: ' + err);
+    });
 });
 
 // READ food by name
 app.get('/food/:name', (req, res) => {
-  const { name } = req.params;
-  const foodItem = food.find(foodItem => foodItem.name === name);
-
-  if (foodItem) {
-    res.status(200).json(foodItem);
-  } else {
-    res.status(400).send('no such foodItem');
-  }
+  Food.findOne({ name: req.params.name })
+    .then(food => {
+      res.json(food);
+    })
+    .catch(err => {
+      console.error(err);
+      res.status(500).send('Error ' + err);
+    });
 });
 
 // READ food by ingredient
-app.get('/food/ingredient/:ingredientName', (req, res) => {
-  const { ingredientName } = req.params;
-  const ingredient = food.find(food => food.ingredient === ingredientName);
-
-  if (ingredient) {
-    res.status(200).json(ingredient);
-  } else {
-    res.status(400).send('no such ingredient');
-  }
+app.get('/food/:ingredient', (req, res) => {
+  Food.find({ ingredient: req.params.ingredient })
+    .then(food => {
+      res.json(food);
+    })
+    .catch(err => {
+      console.error(err);
+      res.status(500).send('Error ' + err);
+    });
 });
-
-// ---------------------------- delete above -------------
-
-// get food
-// app.get('/food', (req, res) => {
-//   food.find()
-//     .then(food => {
-//       res.status(201).json(food);
-//     })
-//     .catch(err => {
-//       console.error(err);
-//       res.status(500).send('Error: ' + err);
-//     });
-// });
-
-// app.get('/users', (req, res) => {
-//   Users.find();
-// });
 
 // app.get('/locations');
 
