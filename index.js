@@ -1,7 +1,6 @@
 const bodyParser = require('body-parser');
+
 const express = require('express');
-const crypto = require('crypto');
-const assignID = crypto.randomUUID();
 
 const app = express();
 const mongoose = require('mongoose');
@@ -13,6 +12,11 @@ const Users = Models.Users;
 
 app.use(express.json());
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+let auth = require('./auth')(app);
+const passport = require('passport');
+require('./passport');
 
 mongoose.connect('mongodb://127.0.0.1:27017/EorzeanCuisine', {
   useNewUrlParser: true,
@@ -36,27 +40,31 @@ app.get('/users', (req, res) => {
       res.status(500).send('Error: ' + err);
     });
 });
-// get one user by userName
-app.get('/users/:userName', (req, res) => {
-  Users.findOne({ userName: req.params.userName })
-    .then(user => {
-      res.status(201).json(user);
-    })
-    .catch(err => {
-      console.error(err);
-      res.status(500).send('Error: ' + err);
-    });
-});
+// get one user by Username
+app.get(
+  '/users/:Username',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    Users.findOne({ Username: req.params.Username })
+      .then(user => {
+        res.status(201).json(user);
+      })
+      .catch(err => {
+        console.error(err);
+        res.status(500).send('Error: ' + err);
+      });
+  }
+);
 
 // create new user
 app.post('/users', (req, res) => {
-  Users.findOne({ userName: req.body.userName }).then(user => {
+  Users.findOne({ Username: req.body.Username }).then(user => {
     if (user) {
-      return res.status(400).send(req.body.userName + ' is already a user.');
+      return res.status(400).send(req.body.Username + ' is already a user.');
     } else {
       Users.create({
-        userName: req.body.userName,
-        password: req.body.password,
+        Username: req.body.Username,
+        Password: req.body.Password,
         email: req.body.email,
         birthday: req.body.birthday,
       })
@@ -72,13 +80,13 @@ app.post('/users', (req, res) => {
 });
 
 //update user
-app.put('/users/:userName', (req, res) => {
+app.put('/users/:Username', (req, res) => {
   Users.findOneAndUpdate(
-    { userName: req.params.userName },
+    { Username: req.params.Username },
     {
       $set: {
-        userName: req.body.userName,
-        password: req.body.password,
+        Username: req.body.Username,
+        Password: req.body.Password,
         favoriteFood: req.body.favoriteFood,
       },
     },
@@ -95,13 +103,13 @@ app.put('/users/:userName', (req, res) => {
 });
 
 // Delete a user by name
-app.delete('/users/:userName', (req, res) => {
-  Users.findOneAndRemove({ userName: req.params.userName })
+app.delete('/users/:Username', (req, res) => {
+  Users.findOneAndRemove({ Username: req.params.Username })
     .then(user => {
       if (!user) {
-        res.status(400).send(req.params.userName + ' was not found');
+        res.status(400).send(req.params.Username + ' was not found');
       } else {
-        res.status(200).send(req.params.userName + ' was deleted.');
+        res.status(200).send(req.params.Username + ' was deleted.');
       }
     })
     .catch(err => {
@@ -111,9 +119,9 @@ app.delete('/users/:userName', (req, res) => {
 });
 
 // CREATE add food to favorites
-app.post('/users/:userName/:id', (req, res) => {
+app.post('/users/:Username/:id', (req, res) => {
   Users.findOneAndUpdate(
-    { userName: req.params.userName },
+    { Username: req.params.Username },
     {
       $push: { favoriteFood: req.params.id },
     },

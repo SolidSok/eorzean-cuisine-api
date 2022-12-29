@@ -13,8 +13,8 @@ let locationsSchema = mongoose.Schema({
 });
 
 let usersSchema = mongoose.Schema({
-  userName: { type: String, required: true },
-  password: { type: String, required: true },
+  Username: { type: String, required: true },
+  Password: { type: String, required: true },
   favoriteFood: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Food' }],
 });
 
