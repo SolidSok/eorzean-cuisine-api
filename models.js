@@ -4,7 +4,7 @@ let foodSchema = mongoose.Schema({
   name: { type: String, required: true },
   description: { type: String, required: true },
   type: { type: String, required: true },
-  region: { trype: String },
+  region: { type: String },
 });
 
 let locationsSchema = mongoose.Schema({
@@ -15,6 +15,7 @@ let locationsSchema = mongoose.Schema({
 let usersSchema = mongoose.Schema({
   name: { type: String, required: true },
   password: { type: String, required: true },
+  favoriteFood: [String],
 });
 
 let Food = mongoose.model('Food', foodSchema);

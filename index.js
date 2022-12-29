@@ -25,6 +25,7 @@ app.get('/', (req, res) => {
   res.send('Welcome!');
 });
 
+// get list of users
 app.get('/users', (req, res) => {
   Users.find()
     .then(users => {
@@ -35,7 +36,19 @@ app.get('/users', (req, res) => {
       res.status(500).send('Error: ' + err);
     });
 });
+// get one user by name
+app.get('/users/:name', (req, res) => {
+  Users.findOne({ name: req.params.name })
+    .then(user => {
+      res.status(201).json(user);
+    })
+    .catch(err => {
+      console.error(err);
+      res.status(500).send('Error: ' + err);
+    });
+});
 
+// create new user
 app.post('/users', (req, res) => {
   Users.findOne({ name: req.body.name }).then(user => {
     if (user) {
@@ -58,6 +71,7 @@ app.post('/users', (req, res) => {
   });
 });
 
+//update user
 app.put('/users/:name', (req, res) => {
   Users.findOneAndUpdate(
     { name: req.params.name },
@@ -65,6 +79,7 @@ app.put('/users/:name', (req, res) => {
       $set: {
         name: req.body.name,
         password: req.body.password,
+        favoriteFood: req.body.favoriteFood,
       },
     },
     { new: true }, // This line makes sure that the updated document is returned
@@ -96,9 +111,9 @@ app.delete('/users/:name', (req, res) => {
 });
 
 // CREATE add food to favorites
-app.post('/users/:id/:foodName', (req, res) => {
+app.post('/users/:name/:foodName', (req, res) => {
   Users.findOneAndUpdate(
-    { id: req.params.id },
+    { name: req.params.name },
     {
       $push: { favoriteFood: req.params.foodName },
     },
@@ -152,9 +167,9 @@ app.get('/food/:name', (req, res) => {
     });
 });
 
-// READ food by ingredient
-app.get('/food/:ingredient', (req, res) => {
-  Food.find({ ingredient: req.params.ingredient })
+// READ food by type
+app.get('/food/type/:type', (req, res) => {
+  Food.find({ type: req.params.type })
     .then(food => {
       res.json(food);
     })
@@ -163,6 +178,40 @@ app.get('/food/:ingredient', (req, res) => {
       res.status(500).send('Error ' + err);
     });
 });
+
+// read food by region
+app.get('/food/region/:region', (req, res) => {
+  Food.find({ region: req.params.region })
+    .then(food => res.json(food))
+    .catch(err => {
+      console.error(err);
+      res.status(500).send('Error ' + err);
+    });
+});
+
+// testing for adding food, do not use in actual product
+// app.post('/food', (req, res) => {
+//   Food.findOne({ name: req.body.name })
+//     .then(food => {
+//       if (food) {
+//         return res.status(400).send('already food');
+//       } else {
+//         Food.create({
+//           name: req.body.name,
+//           description: req.body.description,
+//           type: req.body.type,
+//           region: req.body.region,
+//         });
+//       }
+//     })
+//     .then(food => {
+//       res.status(201).json(food);
+//     })
+//     .catch(err => {
+//       console.error(err);
+//       res.status(500).send('Error: ' + err);
+//     });
+// });
 
 // app.get('/locations');
 
