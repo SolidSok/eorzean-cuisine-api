@@ -1,0 +1,4 @@
+{"_id":{"$oid":"63a55700de59ca40cb39af6b"},"password":"password","__v":0,"favoriteFood":["bagel","bagel","bagel","bagel"],"userName":"Susan"}
+{"_id":{"$oid":"63a5586422007c815009beb2"},"password":"Galatea","__v":0,"favoriteFood":[{"$oid":"6396dbc8793b62f499896a62"}],"userName":"Cessei"}
+{"_id":{"$oid":"63acdd6205518032e93760e9"},"password":"Asetea","__v":0,"favoriteFood":"pizza","userName":"Glacies"}
+{"_id":{"$oid":"63acf2f1404e34bc2c16c219"},"password":"test","userName":"test"}

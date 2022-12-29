@@ -36,9 +36,9 @@ app.get('/users', (req, res) => {
       res.status(500).send('Error: ' + err);
     });
 });
-// get one user by name
-app.get('/users/:name', (req, res) => {
-  Users.findOne({ name: req.params.name })
+// get one user by userName
+app.get('/users/:userName', (req, res) => {
+  Users.findOne({ userName: req.params.userName })
     .then(user => {
       res.status(201).json(user);
     })
@@ -50,12 +50,12 @@ app.get('/users/:name', (req, res) => {
 
 // create new user
 app.post('/users', (req, res) => {
-  Users.findOne({ name: req.body.name }).then(user => {
+  Users.findOne({ userName: req.body.userName }).then(user => {
     if (user) {
-      return res.status(400).send(req.body.name + ' is already a user.');
+      return res.status(400).send(req.body.userName + ' is already a user.');
     } else {
       Users.create({
-        name: req.body.name,
+        userName: req.body.userName,
         password: req.body.password,
         email: req.body.email,
         birthday: req.body.birthday,
@@ -72,12 +72,12 @@ app.post('/users', (req, res) => {
 });
 
 //update user
-app.put('/users/:name', (req, res) => {
+app.put('/users/:userName', (req, res) => {
   Users.findOneAndUpdate(
-    { name: req.params.name },
+    { userName: req.params.userName },
     {
       $set: {
-        name: req.body.name,
+        userName: req.body.userName,
         password: req.body.password,
         favoriteFood: req.body.favoriteFood,
       },
@@ -95,13 +95,13 @@ app.put('/users/:name', (req, res) => {
 });
 
 // Delete a user by name
-app.delete('/users/:name', (req, res) => {
-  Users.findOneAndRemove({ name: req.params.name })
+app.delete('/users/:userName', (req, res) => {
+  Users.findOneAndRemove({ userName: req.params.userName })
     .then(user => {
       if (!user) {
-        res.status(400).send(req.params.name + ' was not found');
+        res.status(400).send(req.params.userName + ' was not found');
       } else {
-        res.status(200).send(req.params.name + ' was deleted.');
+        res.status(200).send(req.params.userName + ' was deleted.');
       }
     })
     .catch(err => {
@@ -111,9 +111,9 @@ app.delete('/users/:name', (req, res) => {
 });
 
 // CREATE add food to favorites
-app.post('/users/:name/:id', (req, res) => {
+app.post('/users/:userName/:id', (req, res) => {
   Users.findOneAndUpdate(
-    { name: req.params.name },
+    { userName: req.params.userName },
     {
       $push: { favoriteFood: req.params.id },
     },
