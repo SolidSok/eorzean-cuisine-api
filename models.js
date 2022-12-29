@@ -15,7 +15,7 @@ let locationsSchema = mongoose.Schema({
 let usersSchema = mongoose.Schema({
   name: { type: String, required: true },
   password: { type: String, required: true },
-  favoriteFood: [String],
+  favoriteFood: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Food' }],
 });
 
 let Food = mongoose.model('Food', foodSchema);

@@ -111,11 +111,11 @@ app.delete('/users/:name', (req, res) => {
 });
 
 // CREATE add food to favorites
-app.post('/users/:name/:foodName', (req, res) => {
+app.post('/users/:name/:id', (req, res) => {
   Users.findOneAndUpdate(
     { name: req.params.name },
     {
-      $push: { favoriteFood: req.params.foodName },
+      $push: { favoriteFood: req.params.id },
     },
     { new: true }, // This line makes sure that the updated document is returned
     (err, updatedUser) => {
