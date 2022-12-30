@@ -10,6 +10,16 @@ const Food = Models.Food;
 const Locations = Models.Locations;
 const Users = Models.Users;
 
+mongoose.connect(process.env.CONNECTION_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+
+// mongoose.connect('mongodb://127.0.0.1:27017/EorzeanCuisine', {
+//   useNewUrlParser: true,
+//   useUnifiedTopology: true,
+// });
+
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -36,16 +46,6 @@ let auth = require('./auth')(app);
 const passport = require('passport');
 const { check, validationResult } = require('express-validator');
 require('./passport');
-
-mongoose.connect(process.env.CONNECTION_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
-
-// mongoose.connect('mongodb://127.0.0.1:27017/EorzeanCuisine', {
-//   useNewUrlParser: true,
-//   useUnifiedTopology: true,
-// });
 
 // ----- Routes ----- //
 
