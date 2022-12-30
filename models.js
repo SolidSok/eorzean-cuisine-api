@@ -15,8 +15,17 @@ let locationsSchema = mongoose.Schema({
 let usersSchema = mongoose.Schema({
   Username: { type: String, required: true },
   Password: { type: String, required: true },
+  Email: { type: String },
   favoriteFood: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Food' }],
 });
+
+usersSchema.statics.hashPassword = password => {
+  return bcrypt.hashSync(password, 10);
+};
+
+usersSchema.methods.validatePassword = function (password) {
+  return bcrypt.compareSync(password, this.Password);
+};
 
 let Food = mongoose.model('Food', foodSchema);
 let Locations = mongoose.model('Location', locationsSchema);
