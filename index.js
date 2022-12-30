@@ -88,7 +88,10 @@ app.get(
 app.post(
   '/users',
   [
-    check('Username', 'Username is required').isLength({ min: 5 }),
+    check(
+      'Username',
+      'Username is required with at least 5 characters'
+    ).isLength({ min: 5 }),
     check(
       'Username',
       'Username contains non alphanumeric characters - not allowed.'
@@ -102,8 +105,7 @@ app.post(
       return res.status(422).json({ errors: errors.array() });
     }
 
-    let hashedPassword = Users.hashedPassword(req.body.Password);
-
+    let hashedPassword = Users.hashPassword(req.body.Password);
     Users.findOne({ Username: req.body.Username }).then(user => {
       if (user) {
         return res.status(400).send(req.body.Username + ' is already a user.');
