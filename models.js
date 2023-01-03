@@ -5,6 +5,7 @@ let foodSchema = mongoose.Schema({
   description: { type: String, required: true },
   type: { type: String, required: true },
   region: { type: String },
+  price: { type: String },
 });
 
 let locationSchema = mongoose.Schema({
