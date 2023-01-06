@@ -11,6 +11,8 @@ let foodSchema = mongoose.Schema({
 let locationSchema = mongoose.Schema({
   name: { type: String, required: true },
   description: { type: String, required: true },
+  locales: { type: String },
+  people: { type: String },
 });
 
 let userSchema = mongoose.Schema({
