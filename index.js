@@ -29,7 +29,7 @@ let allowedOrigins = [
   'http://localhost:8080',
   'http://localhost:1234',
   'http://localhost:3000',
-  'http://eorzean-cuisine-client.herokuapp.com',
+  'https://eorzean-cuisine-client.herokuapp.com/menu',
 ];
 
 app.use(
