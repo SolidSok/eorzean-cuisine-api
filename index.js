@@ -29,6 +29,7 @@ let allowedOrigins = [
   'http://localhost:8080',
   'http://localhost:1234',
   'http://localhost:3000',
+  'http://eorzean-cuisine-client.herokuapp.com',
 ];
 
 app.use(
@@ -56,7 +57,7 @@ require('./passport');
 app.get('/', (req, res) => {
   res.send('Welcome!');
 });
-
+// ------------ Users -------------------- //
 // get list of users
 app.get(
   '/users',
@@ -220,6 +221,9 @@ app.delete(
     }
   }
 );
+// ------------ /Users -------------------- //
+
+// ------------ Food -------------------- //
 
 app.get('/food', (req, res) => {
   Food.find()
@@ -265,6 +269,11 @@ app.get('/food/region/:region', (req, res) => {
       res.status(500).send('Error ' + err);
     });
 });
+// ------------ /Food -------------------- //
+
+// ------------ Locations -------------------- //
+
+// ------------ /Locations -------------------- //
 
 // testing for adding food, do not use in actual product
 // app.post('/food', (req, res) => {
