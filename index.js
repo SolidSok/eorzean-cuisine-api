@@ -275,6 +275,17 @@ app.get('/food/region/:region', (req, res) => {
 
 // ------------ /Locations -------------------- //
 
+// get location data
+app.get('/locations', (req, res) => {
+  Locations.find()
+    .then(locations => {
+      res.status(201).json(locations);
+    })
+    .catch(err => {
+      console.error(err);
+      res.status(500).send('Error: ' + err);
+    });
+});
 // testing for adding food, do not use in actual product
 // app.post('/food', (req, res) => {
 //   Food.findOne({ name: req.body.name })
@@ -298,8 +309,6 @@ app.get('/food/region/:region', (req, res) => {
 //       res.status(500).send('Error: ' + err);
 //     });
 // });
-
-// app.get('/locations');
 
 // app.post('/users', (req, res) => {
 //   let newUser = req.body;
