@@ -48,7 +48,7 @@ let allowedOrigins = [
 // );
 app.use(
   cors({
-    origin: 'https://eorzean-cuisine.vercel.app/',
+    origin: 'https://eorzean-cuisine-solidsok.vercel.app/',
     methods: ['GET'],
   })
 );
